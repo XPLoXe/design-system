@@ -13,8 +13,15 @@ defineSlots<{
 
 const appConfig = useAppConfig()
 const { apps } = useApps()
+const { isCyberpunk } = useSkin()
 
 const homeUrl = computed(() => apps.value.find(app => app.id === 'landing')?.url ?? '/')
+
+// Shown under the title in cyberpunk mode, e.g. SPENDY.ALEBOCCHICCHIO.COM
+const currentHost = computed(() => {
+  const url = apps.value.find(app => app.id === props.current)?.url
+  return url ? new URL(url).host : appConfig.site.domain
+})
 
 const items = computed<NavigationMenuItem[]>(() =>
   apps.value.map(app => ({
@@ -33,11 +40,18 @@ const items = computed<NavigationMenuItem[]>(() =>
     :title="appConfig.site.name"
     :to="homeUrl"
   >
+    <template #title>
+      {{ appConfig.site.name }}
+      <span class="ale-cp-only ale-header-host">{{ currentHost }}</span>
+    </template>
+
     <UNavigationMenu :items="items" />
 
     <template #right>
       <slot name="right" />
-      <UColorModeButton />
+      <!-- Cyberpunk mode is always dark -->
+      <UColorModeButton :disabled="isCyberpunk" />
+      <AleSkinButton />
     </template>
 
     <template #body>

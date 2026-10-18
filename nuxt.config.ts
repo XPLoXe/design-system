@@ -15,4 +15,13 @@ export default defineNuxtConfig({
   ],
 
   css: [resolve('./app/assets/css/main.css')],
+
+  fonts: {
+    // Cyberpunk skin fonts. Declared globally because they're only referenced
+    // through CSS variables; browsers download them only when the skin is on.
+    families: [
+      { name: 'Rajdhani', provider: 'google', weights: [400, 500, 600, 700], global: true, preload: false },
+      { name: 'Orbitron', provider: 'google', weights: [400, 500, 700], global: true, preload: false },
+    ],
+  },
 })

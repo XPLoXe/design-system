@@ -5,6 +5,7 @@ A shared [Nuxt layer](https://nuxt.com/docs/getting-started/layers) for every ap
 - **Theme**: brand `primary` palette, `zinc` neutral, Inter font, base radius.
 - **Shell**: `<AleNavbar>` and `<AleFooter>`, built from Nuxt UI primitives, plus a default layout that uses them.
 - **Shared config**: an overridable `site` app config (name, current app, footer text) and a `useApps()` registry of all apps.
+- **Cyberpunk mode**: an optional second skin inspired by the Cyberpunk 2077 UI, switched from the navbar and remembered across all subdomains.
 
 It is a thin layer over Nuxt UI, not a component library. Use Nuxt UI components (`U*`) directly in apps.
 
@@ -42,6 +43,8 @@ export default defineAppConfig({
 | `site.name` | `Ale Bocchicchio` | Brand name in the navbar and footer |
 | `site.appId` | `''` | Id of the current app in `useApps()` |
 | `site.footerText` | `Built with Nuxt UI.` | Text after the footer copyright |
+| `site.domain` | `alebocchicchio.com` | Root domain; the skin choice is shared across its subdomains |
+| `site.cyberpunk` | `true` | Show the cyberpunk mode toggle; `false` hides it and keeps the default skin |
 
 ### Components
 
@@ -49,6 +52,7 @@ export default defineAppConfig({
 | --- | --- | --- |
 | `<AleNavbar>` | `current?: string`: id of the active app | `right`: app-specific content, e.g. a user menu (rendered before the color mode button) |
 | `<AleFooter>` | none | `right` |
+| `<AleSkinButton>` | none | none. The cyberpunk mode toggle; already in the navbar, next to the color mode button |
 
 The default layout renders `<AleNavbar :current="site.appId">`, the page, and `<AleFooter>`. To fill the navbar's `right` slot, override the layout in the app:
 
@@ -76,6 +80,31 @@ const appConfig = useAppConfig()
 ### `useApps()`
 
 Returns `{ apps }`, a read-only ref of `AleApp[]` (`id`, `name`, `url`, `icon?`, `description?`, `status?: 'live' | 'soon'`). The list is hardcoded in [`app/composables/useApps.ts`](app/composables/useApps.ts) for now. It's backed by `useState('ale-apps')`, so it can later be loaded from a manifest without changing the navbar or footer API.
+
+### Cyberpunk mode
+
+The chip button in the navbar switches every Nuxt UI component to a second skin: the CP2077 red/cyan palette, Rajdhani and Orbitron, cut corners, scanlines, and a short glitch when it turns on (skipped for reduced motion). It is always dark, so the color mode button is disabled while it's on; the user's light/dark preference is kept and comes back when they switch off.
+
+- **Persistence**: the choice is stored in an `ale-skin` cookie on `.alebocchicchio.com`, so it follows the user across apps. On other hosts (e.g. `localhost`) the cookie is host-only.
+- **No flash**: the server reads the cookie and renders `<html data-skin="cyberpunk">` directly.
+- **In code**: `useSkin()` returns `{ skin, isCyberpunk, enabled, setSkin, toggle }`.
+
+How it works: [`app/app.config.ts`](app/app.config.ts) adds `ale-*` hook classes to Nuxt UI components (they carry no styles), and [`app/assets/css/cyberpunk.css`](app/assets/css/cyberpunk.css) styles them under `[data-skin="cyberpunk"]`. If an app overrides one of those slots in its own `app.config.ts` (for example `ui.button.slots.base`), the override replaces the hook, so include the hook class in the new value:
+
+```ts
+ui: { button: { slots: { base: 'ale-btn font-bold' } } }
+```
+
+Optional helpers for app markup:
+
+| Helper | Effect in cyberpunk mode |
+| --- | --- |
+| `class="ale-cp-only"` | Element is only shown in cyberpunk mode |
+| `class="ale-glitch" data-text="Same text"` | Glitch effect on hover |
+| `class="ale-heading"` on a heading wrapper | Trailing rule with yellow dashes |
+| `class="ale-featured"` on `UCard` | Yellow HUD corners |
+| `class="ale-accent"` on `UBadge` | Yellow badge |
+| `data-code="SPND_0001"` on `UCard` | Small decorative code in the top-right corner |
 
 ## Develop locally
 

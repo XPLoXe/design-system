@@ -1,0 +1,889 @@
+/*
+ * Cyberpunk skin, inspired by the Cyberpunk 2077 UI.
+ *
+ * Active when <html data-skin="cyberpunk"> (set by plugins/skin.ts).
+ * Styles Nuxt UI components through the `ale-*` hook classes added in app.config.ts.
+ * Rules are intentionally unlayered so they win over Tailwind utilities without !important.
+ *
+ * Opt-in helpers for app markup:
+ *   .ale-cp-only         element only visible in cyberpunk mode
+ *   .ale-glitch          glitch on hover; needs data-text="<same text>"
+ *   .ale-heading         heading row with a trailing rule
+ *   .ale-featured        on UCard: yellow HUD corners
+ *   .ale-accent          on UBadge: yellow badge
+ *   data-code="..."      on UCard: decorative code in the top-right corner
+ */
+
+:root {
+  --ale-yellow: #FCEE0A;
+  /* Decorative face: Orbitron in cyberpunk mode, the regular sans otherwise */
+  --ale-font-display: var(--font-sans);
+}
+
+.ale-cp-only {
+  display: none;
+}
+
+.ale-glitch {
+  position: relative;
+  display: inline-block;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tokens                                                              */
+/* ------------------------------------------------------------------ */
+
+:root[data-skin="cyberpunk"] {
+  color-scheme: dark;
+  /* Rajdhani runs small; bump the rem base */
+  font-size: 106.25%;
+
+  /* CP2077 UI palette */
+  --ui-primary: #F75049;
+  --ui-secondary: #5EF6FF;
+  --ui-success: #1DED83;
+  --ui-info: #2570D4;
+  --ui-warning: #F0B537;
+  /* Red is the primary color here, so errors use orange */
+  --ui-error: #FB932E;
+
+  --ui-bg: #0E0E17;
+  --ui-bg-muted: #13111B;
+  --ui-bg-elevated: #1B1119;
+  --ui-bg-accented: #2A1419;
+  --ui-bg-inverted: #D6D0D0;
+
+  --ui-text-dimmed: #7E2F30;
+  --ui-text-muted: #D24A44;
+  --ui-text-toned: #F2665F;
+  --ui-text: #F75049;
+  --ui-text-highlighted: #5EF6FF;
+  --ui-text-inverted: #0E0E17;
+
+  --ui-border: #5A2328;
+  --ui-border-muted: #3A1A1E;
+  --ui-border-accented: #B23E3B;
+  --ui-border-inverted: #D6D0D0;
+
+  --ui-radius: 0px;
+  --font-sans: "Rajdhani", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --ale-font-display: "Orbitron", "Rajdhani", ui-sans-serif, system-ui, sans-serif;
+
+  /* Palette ramps derived from each color (light shades mix with white, dark with the background) */
+  --ui-color-primary-50: color-mix(in oklab, var(--ui-primary) 10%, white);
+  --ui-color-primary-100: color-mix(in oklab, var(--ui-primary) 20%, white);
+  --ui-color-primary-200: color-mix(in oklab, var(--ui-primary) 40%, white);
+  --ui-color-primary-300: color-mix(in oklab, var(--ui-primary) 60%, white);
+  --ui-color-primary-400: color-mix(in oklab, var(--ui-primary) 80%, white);
+  --ui-color-primary-500: var(--ui-primary);
+  --ui-color-primary-600: color-mix(in oklab, var(--ui-primary) 82%, var(--ui-bg));
+  --ui-color-primary-700: color-mix(in oklab, var(--ui-primary) 65%, var(--ui-bg));
+  --ui-color-primary-800: color-mix(in oklab, var(--ui-primary) 48%, var(--ui-bg));
+  --ui-color-primary-900: color-mix(in oklab, var(--ui-primary) 34%, var(--ui-bg));
+  --ui-color-primary-950: color-mix(in oklab, var(--ui-primary) 22%, var(--ui-bg));
+
+  --ui-color-secondary-50: color-mix(in oklab, var(--ui-secondary) 10%, white);
+  --ui-color-secondary-100: color-mix(in oklab, var(--ui-secondary) 20%, white);
+  --ui-color-secondary-200: color-mix(in oklab, var(--ui-secondary) 40%, white);
+  --ui-color-secondary-300: color-mix(in oklab, var(--ui-secondary) 60%, white);
+  --ui-color-secondary-400: color-mix(in oklab, var(--ui-secondary) 80%, white);
+  --ui-color-secondary-500: var(--ui-secondary);
+  --ui-color-secondary-600: color-mix(in oklab, var(--ui-secondary) 82%, var(--ui-bg));
+  --ui-color-secondary-700: color-mix(in oklab, var(--ui-secondary) 65%, var(--ui-bg));
+  --ui-color-secondary-800: color-mix(in oklab, var(--ui-secondary) 48%, var(--ui-bg));
+  --ui-color-secondary-900: color-mix(in oklab, var(--ui-secondary) 34%, var(--ui-bg));
+  --ui-color-secondary-950: color-mix(in oklab, var(--ui-secondary) 22%, var(--ui-bg));
+
+  --ui-color-success-50: color-mix(in oklab, var(--ui-success) 10%, white);
+  --ui-color-success-100: color-mix(in oklab, var(--ui-success) 20%, white);
+  --ui-color-success-200: color-mix(in oklab, var(--ui-success) 40%, white);
+  --ui-color-success-300: color-mix(in oklab, var(--ui-success) 60%, white);
+  --ui-color-success-400: color-mix(in oklab, var(--ui-success) 80%, white);
+  --ui-color-success-500: var(--ui-success);
+  --ui-color-success-600: color-mix(in oklab, var(--ui-success) 82%, var(--ui-bg));
+  --ui-color-success-700: color-mix(in oklab, var(--ui-success) 65%, var(--ui-bg));
+  --ui-color-success-800: color-mix(in oklab, var(--ui-success) 48%, var(--ui-bg));
+  --ui-color-success-900: color-mix(in oklab, var(--ui-success) 34%, var(--ui-bg));
+  --ui-color-success-950: color-mix(in oklab, var(--ui-success) 22%, var(--ui-bg));
+
+  --ui-color-info-50: color-mix(in oklab, var(--ui-info) 10%, white);
+  --ui-color-info-100: color-mix(in oklab, var(--ui-info) 20%, white);
+  --ui-color-info-200: color-mix(in oklab, var(--ui-info) 40%, white);
+  --ui-color-info-300: color-mix(in oklab, var(--ui-info) 60%, white);
+  --ui-color-info-400: color-mix(in oklab, var(--ui-info) 80%, white);
+  --ui-color-info-500: var(--ui-info);
+  --ui-color-info-600: color-mix(in oklab, var(--ui-info) 82%, var(--ui-bg));
+  --ui-color-info-700: color-mix(in oklab, var(--ui-info) 65%, var(--ui-bg));
+  --ui-color-info-800: color-mix(in oklab, var(--ui-info) 48%, var(--ui-bg));
+  --ui-color-info-900: color-mix(in oklab, var(--ui-info) 34%, var(--ui-bg));
+  --ui-color-info-950: color-mix(in oklab, var(--ui-info) 22%, var(--ui-bg));
+
+  --ui-color-warning-50: color-mix(in oklab, var(--ui-warning) 10%, white);
+  --ui-color-warning-100: color-mix(in oklab, var(--ui-warning) 20%, white);
+  --ui-color-warning-200: color-mix(in oklab, var(--ui-warning) 40%, white);
+  --ui-color-warning-300: color-mix(in oklab, var(--ui-warning) 60%, white);
+  --ui-color-warning-400: color-mix(in oklab, var(--ui-warning) 80%, white);
+  --ui-color-warning-500: var(--ui-warning);
+  --ui-color-warning-600: color-mix(in oklab, var(--ui-warning) 82%, var(--ui-bg));
+  --ui-color-warning-700: color-mix(in oklab, var(--ui-warning) 65%, var(--ui-bg));
+  --ui-color-warning-800: color-mix(in oklab, var(--ui-warning) 48%, var(--ui-bg));
+  --ui-color-warning-900: color-mix(in oklab, var(--ui-warning) 34%, var(--ui-bg));
+  --ui-color-warning-950: color-mix(in oklab, var(--ui-warning) 22%, var(--ui-bg));
+
+  --ui-color-error-50: color-mix(in oklab, var(--ui-error) 10%, white);
+  --ui-color-error-100: color-mix(in oklab, var(--ui-error) 20%, white);
+  --ui-color-error-200: color-mix(in oklab, var(--ui-error) 40%, white);
+  --ui-color-error-300: color-mix(in oklab, var(--ui-error) 60%, white);
+  --ui-color-error-400: color-mix(in oklab, var(--ui-error) 80%, white);
+  --ui-color-error-500: var(--ui-error);
+  --ui-color-error-600: color-mix(in oklab, var(--ui-error) 82%, var(--ui-bg));
+  --ui-color-error-700: color-mix(in oklab, var(--ui-error) 65%, var(--ui-bg));
+  --ui-color-error-800: color-mix(in oklab, var(--ui-error) 48%, var(--ui-bg));
+  --ui-color-error-900: color-mix(in oklab, var(--ui-error) 34%, var(--ui-bg));
+  --ui-color-error-950: color-mix(in oklab, var(--ui-error) 22%, var(--ui-bg));
+
+  /* Warm grey from the secondary palette, down to the background */
+  --ui-color-neutral-50: color-mix(in oklab, #D6D0D0 50%, white);
+  --ui-color-neutral-100: color-mix(in oklab, #D6D0D0 75%, white);
+  --ui-color-neutral-200: #D6D0D0;
+  --ui-color-neutral-300: color-mix(in oklab, #D6D0D0 80%, var(--ui-bg));
+  --ui-color-neutral-400: color-mix(in oklab, #D6D0D0 65%, var(--ui-bg));
+  --ui-color-neutral-500: color-mix(in oklab, #D6D0D0 52%, var(--ui-bg));
+  --ui-color-neutral-600: color-mix(in oklab, #D6D0D0 40%, var(--ui-bg));
+  --ui-color-neutral-700: color-mix(in oklab, #D6D0D0 30%, var(--ui-bg));
+  --ui-color-neutral-800: color-mix(in oklab, #D6D0D0 20%, var(--ui-bg));
+  --ui-color-neutral-900: color-mix(in oklab, #D6D0D0 12%, var(--ui-bg));
+  --ui-color-neutral-950: color-mix(in oklab, #D6D0D0 6%, var(--ui-bg));
+}
+
+/* ------------------------------------------------------------------ */
+/* Page                                                                */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] body {
+  background:
+    radial-gradient(1100px 560px at 50% -180px, color-mix(in srgb, var(--ui-primary) 15%, transparent), transparent 70%),
+    radial-gradient(700px 480px at 105% 105%, color-mix(in srgb, var(--ui-secondary) 6%, transparent), transparent 70%),
+    var(--ui-bg);
+  background-attachment: fixed;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+[data-skin="cyberpunk"] ::selection {
+  background: var(--ale-yellow);
+  color: var(--ui-bg);
+}
+
+[data-skin="cyberpunk"] .ale-cp-only {
+  display: revert;
+}
+
+[data-skin="cyberpunk"] :is(h1, h2, h3) {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Scanlines */
+[data-skin="cyberpunk"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.35;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, color-mix(in srgb, var(--ui-bg) 70%, transparent) 2px 3px);
+}
+
+/* Vertical data strips at the screen edges, wide screens only */
+@media (min-width: 1440px) {
+  [data-skin="cyberpunk"]::before,
+  [data-skin="cyberpunk"]::after {
+    position: fixed;
+    top: 50%;
+    z-index: 1;
+    pointer-events: none;
+    writing-mode: vertical-rl;
+    font: 500 9px/1.6 var(--ale-font-display);
+    letter-spacing: 0.3em;
+    color: var(--ui-text-dimmed);
+  }
+
+  [data-skin="cyberpunk"]::before {
+    content: "0110 1011 0001 1101 // SYS.LAYER // SUBNET 01";
+    content: "0110 1011 0001 1101 // SYS.LAYER // SUBNET 01" / "";
+    left: 10px;
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  [data-skin="cyberpunk"]::after {
+    content: "1101 0010 1110 0111 // SKIN.CYBERPUNK // LINK STABLE";
+    content: "1101 0010 1110 0111 // SKIN.CYBERPUNK // LINK STABLE" / "";
+    right: 10px;
+    transform: translateY(-50%);
+  }
+}
+
+/* Glitch: on .ale-glitch hover, and once when the skin turns on */
+[data-skin="cyberpunk"] .ale-glitch[data-text]::before,
+[data-skin="cyberpunk"] .ale-glitch[data-text]::after {
+  content: attr(data-text);
+  content: attr(data-text) / "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-skin="cyberpunk"] .ale-glitch::before {
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-glitch::after {
+  color: var(--ui-secondary);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-skin="cyberpunk"] .ale-glitch:hover::before,
+  .ale-cp-boot .ale-glitch::before {
+    animation: ale-glitch-a 0.5s steps(2) 1;
+  }
+
+  [data-skin="cyberpunk"] .ale-glitch:hover::after,
+  .ale-cp-boot .ale-glitch::after {
+    animation: ale-glitch-b 0.5s steps(2) 1;
+  }
+
+  .ale-cp-boot #__nuxt {
+    animation: ale-jitter 0.4s steps(3) 1;
+  }
+
+  .ale-cp-boot body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 101;
+    pointer-events: none;
+    background: repeating-linear-gradient(to bottom, color-mix(in srgb, var(--ui-primary) 14%, transparent) 0 2px, transparent 2px 7px);
+    animation: ale-boot 0.45s ease-out forwards;
+  }
+}
+
+@keyframes ale-glitch-a {
+  0% { opacity: 0.9; transform: translate(-3px, 1px); clip-path: inset(10% 0 55% 0); }
+  50% { opacity: 0.9; transform: translate(3px, -1px); clip-path: inset(60% 0 8% 0); }
+  100% { opacity: 0; }
+}
+
+@keyframes ale-glitch-b {
+  0% { opacity: 0.9; transform: translate(3px, -1px); clip-path: inset(50% 0 20% 0); }
+  50% { opacity: 0.9; transform: translate(-2px, 1px); clip-path: inset(5% 0 70% 0); }
+  100% { opacity: 0; }
+}
+
+@keyframes ale-jitter {
+  0% { transform: translateX(-3px); }
+  33% { transform: translateX(2px) skewX(-1deg); }
+  66% { transform: translateX(-1px); }
+  100% { transform: none; }
+}
+
+@keyframes ale-boot {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Heading row with a trailing rule ending in yellow dashes */
+[data-skin="cyberpunk"] .ale-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-skin="cyberpunk"] .ale-heading > :first-child {
+  color: var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-heading::after {
+  content: "";
+  flex: 1 1 80px;
+  height: 4px;
+  background:
+    repeating-linear-gradient(90deg, var(--ale-yellow) 0 6px, transparent 6px 10px) right center / 26px 4px no-repeat,
+    linear-gradient(90deg, var(--ui-border-accented), var(--ui-border)) left center / calc(100% - 34px) 1px no-repeat;
+}
+
+/* ------------------------------------------------------------------ */
+/* Chamfered shape: bottom-right corner cut, the border continues      */
+/* along the diagonal. Elements set --ale-cut and --ale-edge.          */
+/* :where() keeps specificity low so component rules can override.     */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] :where(
+  .ale-btn:not(.ale-v-link),
+  .ale-badge,
+  .ale-card,
+  .ale-field,
+  .ale-alert,
+  .ale-toast,
+  .ale-menu,
+  .ale-option[data-highlighted],
+  .ale-tooltip,
+  .ale-modal,
+  .ale-nav[data-orientation="vertical"] .ale-nav-link[data-active]
+) {
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--ale-cut, 10px)), calc(100% - var(--ale-cut, 10px)) 100%, 0 100%);
+  background-image: linear-gradient(to top left, transparent 50%, var(--ale-edge, transparent) 50%, var(--ale-edge, transparent) calc(50% + 1.5px), transparent calc(50% + 1.5px));
+  background-size: var(--ale-cut, 10px) var(--ale-cut, 10px);
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  background-origin: border-box;
+}
+
+/* ------------------------------------------------------------------ */
+/* Button                                                              */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] .ale-btn {
+  --ale-cut: 0.75em;
+  --ale-edge: currentColor;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* Extra room on the right for the cut corner */
+[data-skin="cyberpunk"] .ale-btn:not(.ale-square, .ale-v-link) {
+  padding-inline: 0.95em 1.3em;
+}
+
+[data-skin="cyberpunk"] .ale-btn:focus-visible {
+  outline: 1px solid var(--ui-secondary);
+  outline-offset: -4px;
+}
+
+[data-skin="cyberpunk"] .ale-btn:disabled,
+[data-skin="cyberpunk"] .ale-btn[aria-disabled="true"] {
+  opacity: 0.4;
+}
+
+[data-skin="cyberpunk"] .ale-btn.ale-v-solid,
+[data-skin="cyberpunk"] .ale-btn.ale-v-ghost {
+  --ale-edge: transparent;
+}
+
+[data-skin="cyberpunk"] .ale-btn.ale-v-outline {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+/* Thick bar on the left, like "Skip the time" */
+[data-skin="cyberpunk"] .ale-btn.ale-v-soft {
+  --ale-edge: transparent;
+  box-shadow: inset 4px 0 0 currentColor;
+}
+
+[data-skin="cyberpunk"] .ale-btn.ale-v-subtle {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 70%, transparent);
+}
+
+/* Red frame with cyan text, like "Go back" */
+[data-skin="cyberpunk"] .ale-btn.ale-c-primary.ale-v-subtle {
+  --ale-edge: var(--ui-primary);
+  color: var(--ui-secondary);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ui-primary) 70%, transparent);
+}
+
+[data-skin="cyberpunk"] .ale-btn.ale-c-primary.ale-v-link {
+  color: var(--ui-secondary);
+}
+
+/* Navbar icon buttons get a frame */
+[data-skin="cyberpunk"] .ale-header-right .ale-btn.ale-v-ghost {
+  --ale-cut: 7px;
+  --ale-edge: var(--ui-border);
+  box-shadow: inset 0 0 0 1px var(--ui-border);
+  background-color: color-mix(in srgb, var(--ui-bg-elevated) 60%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Badge                                                               */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] .ale-badge {
+  --ale-cut: 5px;
+  --ale-edge: currentColor;
+  padding-inline: 0.6em 0.9em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-skin="cyberpunk"] .ale-badge.ale-v-solid {
+  --ale-edge: transparent;
+}
+
+[data-skin="cyberpunk"] .ale-badge.ale-accent {
+  --ale-edge: transparent;
+  background-color: var(--ale-yellow);
+  color: var(--ui-bg);
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Card                                                                */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] .ale-card {
+  --ale-cut: 20px;
+  --ale-edge: var(--ui-border-accented);
+  position: relative;
+  /* A real border; the outer ring would be cut off by clip-path */
+  border: 1px solid var(--ui-border-accented);
+  box-shadow: none;
+  padding-left: 12px;
+}
+
+/* Inner rail on the left edge */
+[data-skin="cyberpunk"] .ale-card::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 16px;
+  bottom: 26px;
+  width: 3px;
+  background: color-mix(in srgb, var(--ui-primary) 50%, transparent);
+}
+
+[data-skin="cyberpunk"] .ale-card[data-code]::after {
+  content: attr(data-code);
+  content: attr(data-code) / "";
+  position: absolute;
+  top: 6px;
+  right: 16px;
+  font: 500 8px/1 var(--ale-font-display);
+  letter-spacing: 0.16em;
+  color: var(--ui-text-dimmed);
+}
+
+[data-skin="cyberpunk"] .ale-card-title {
+  font-size: 1.15em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+/* Yellow HUD corner segments */
+[data-skin="cyberpunk"] .ale-card.ale-featured {
+  background-image:
+    linear-gradient(to top left, transparent 50%, var(--ale-edge) 50%, var(--ale-edge) calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+    linear-gradient(var(--ale-yellow), var(--ale-yellow)),
+    linear-gradient(var(--ale-yellow), var(--ale-yellow)),
+    linear-gradient(var(--ale-yellow), var(--ale-yellow)),
+    linear-gradient(var(--ale-yellow), var(--ale-yellow));
+  background-size: var(--ale-cut) var(--ale-cut), 72px 3px, 3px 30px, 46px 3px, 3px 18px;
+  background-position: right bottom, left top, left top, right calc(var(--ale-cut) + 8px) bottom 0, right 0 top 0;
+  background-repeat: no-repeat;
+}
+
+/* ------------------------------------------------------------------ */
+/* Form fields                                                         */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] .ale-label {
+  font-size: 0.85em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-field {
+  --ale-cut: 9px;
+  --ale-edge: var(--ui-border-accented);
+  box-shadow: inset 0 0 0 1px var(--ui-border-accented);
+  background-color: color-mix(in srgb, var(--ui-bg-elevated) 80%, transparent);
+  color: var(--ui-secondary);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  outline: none;
+}
+
+/* The field box shows focus; no extra ring inside it */
+[data-skin="cyberpunk"] .ale-field:is(:focus, [data-state="open"], [aria-expanded="true"]) {
+  --ale-edge: var(--ui-secondary);
+  box-shadow: inset 0 0 0 1px var(--ui-secondary), inset 0 0 18px color-mix(in srgb, var(--ui-secondary) 14%, transparent);
+}
+
+[data-skin="cyberpunk"] .ale-field-icon {
+  color: var(--ui-primary);
+}
+
+/* Checkbox: square frame, filled square when checked */
+[data-skin="cyberpunk"] .ale-checkbox {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-checkbox-indicator {
+  background-color: transparent;
+}
+
+[data-skin="cyberpunk"] .ale-checkbox-indicator > * {
+  display: none;
+}
+
+[data-skin="cyberpunk"] .ale-checkbox-indicator::after {
+  content: "";
+  width: 55%;
+  height: 55%;
+  background: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-check-label {
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+/* Switch: rectangular, cyan when on */
+[data-skin="cyberpunk"] .ale-switch {
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--ui-border-accented);
+}
+
+[data-skin="cyberpunk"] .ale-switch[data-state="unchecked"] {
+  background-color: var(--ui-bg-accented);
+}
+
+[data-skin="cyberpunk"] .ale-switch[data-state="checked"] {
+  background-color: color-mix(in srgb, var(--ui-secondary) 18%, var(--ui-bg));
+  box-shadow: inset 0 0 0 1px var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-switch-thumb {
+  border-radius: 0;
+  background-color: var(--ui-primary);
+  box-shadow: none;
+}
+
+[data-skin="cyberpunk"] .ale-switch-thumb[data-state="checked"] {
+  background-color: var(--ui-secondary);
+  box-shadow: 0 0 10px var(--ui-secondary);
+}
+
+/* Select / dropdown panel: vehicle-list style */
+[data-skin="cyberpunk"] .ale-menu {
+  --ale-cut: 14px;
+  --ale-edge: var(--ui-border-accented);
+  border: 1px solid var(--ui-border-accented);
+  box-shadow: none;
+  background-color: color-mix(in srgb, var(--ui-bg-muted) 97%, transparent);
+  padding-bottom: 8px;
+}
+
+[data-skin="cyberpunk"] .ale-menu::before {
+  content: "INPUT // AWAITING SELECTION";
+  content: "INPUT // AWAITING SELECTION" / "";
+  display: block;
+  padding: 8px 12px 6px;
+  border-bottom: 1px solid var(--ui-border);
+  font: 500 8px/1 var(--ale-font-display);
+  letter-spacing: 0.18em;
+  color: var(--ui-text-dimmed);
+}
+
+[data-skin="cyberpunk"] .ale-option {
+  --ale-cut: 8px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-option::before {
+  inset: 0;
+  border-radius: 0;
+}
+
+[data-skin="cyberpunk"] .ale-option :is(svg, .iconify) {
+  color: inherit;
+}
+
+[data-skin="cyberpunk"] .ale-option[data-highlighted]:not([data-disabled]) {
+  color: var(--ui-text-inverted);
+}
+
+[data-skin="cyberpunk"] .ale-option[data-highlighted]:not([data-disabled])::before {
+  background-color: var(--ui-secondary);
+}
+
+/* Selected option: filled square instead of a check mark */
+[data-skin="cyberpunk"] .ale-option-check {
+  display: none;
+}
+
+[data-skin="cyberpunk"] .ale-option[data-state="checked"]::after {
+  content: "";
+  flex: none;
+  align-self: center;
+  margin-inline-start: auto;
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+}
+
+/* ------------------------------------------------------------------ */
+/* Progress                                                            */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] .ale-progress,
+[data-skin="cyberpunk"] .ale-progress-indicator {
+  border-radius: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Feedback                                                            */
+/* ------------------------------------------------------------------ */
+
+/* Alert: hazard stripes down the left edge, in the alert's own color */
+[data-skin="cyberpunk"] .ale-alert {
+  --ale-edge: currentColor;
+  padding-left: 22px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 55%, transparent);
+  background-image:
+    linear-gradient(to top left, transparent 50%, var(--ale-edge) 50%, var(--ale-edge) calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+    repeating-linear-gradient(-45deg, currentColor 0 3px, transparent 3px 7px);
+  background-size: var(--ale-cut, 10px) var(--ale-cut, 10px), 7px 100%;
+  background-position: right bottom, left top;
+  background-repeat: no-repeat;
+}
+
+[data-skin="cyberpunk"] .ale-alert-title {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-skin="cyberpunk"] .ale-toast {
+  --ale-cut: 14px;
+  --ale-edge: var(--ui-secondary);
+  box-shadow: inset 4px 0 0 var(--ui-secondary), inset 0 0 0 1px var(--ui-secondary);
+  background-color: color-mix(in srgb, var(--ui-bg-muted) 96%, transparent);
+  padding-left: 20px;
+}
+
+[data-skin="cyberpunk"] .ale-toast-title {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-toast-icon {
+  color: var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-toast .ale-progress-indicator {
+  background-color: var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-tooltip {
+  --ale-cut: 6px;
+  --ale-edge: var(--ui-border-accented);
+  box-shadow: inset 0 0 0 1px var(--ui-border-accented);
+  background-color: var(--ui-bg-muted);
+  color: var(--ui-secondary);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-skin="cyberpunk"] .ale-modal {
+  --ale-cut: 22px;
+  --ale-edge: var(--ui-border-accented);
+  box-shadow: inset 0 0 0 1px var(--ui-border-accented);
+}
+
+/* Banner: the one big yellow moment, logo-style black type with a cyan offset */
+[data-skin="cyberpunk"] .ale-banner {
+  background-color: var(--ale-yellow);
+  color: var(--ui-bg);
+  box-shadow: inset 0 -2px 0 var(--ui-bg);
+}
+
+[data-skin="cyberpunk"] .ale-banner-title {
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ui-bg);
+  text-shadow: 1.5px 1.5px 0 var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-banner-center::before {
+  content: "";
+  flex: none;
+  width: 34px;
+  height: 16px;
+  background: repeating-linear-gradient(-45deg, var(--ui-bg) 0 3px, transparent 3px 7px);
+}
+
+[data-skin="cyberpunk"] .ale-banner-center::after {
+  content: "";
+  flex: none;
+  width: 38px;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, var(--ui-bg) 0 5px, transparent 5px 9px);
+}
+
+[data-skin="cyberpunk"] .ale-banner .ale-btn {
+  color: var(--ui-bg);
+}
+
+[data-skin="cyberpunk"] .ale-banner .ale-btn.ale-v-solid {
+  background-color: var(--ui-bg);
+  color: var(--ale-yellow);
+}
+
+@media (max-width: 639px) {
+  [data-skin="cyberpunk"] .ale-banner-center::after {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Navigation                                                          */
+/* ------------------------------------------------------------------ */
+
+[data-skin="cyberpunk"] .ale-header {
+  background-color: color-mix(in srgb, var(--ui-bg) 90%, transparent);
+  border-bottom-color: var(--ui-border-accented);
+}
+
+[data-skin="cyberpunk"] .ale-header-title {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  font: 700 0.95rem/1.1 var(--ale-font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-header-host {
+  font: 500 8.5px/1 var(--ale-font-display);
+  letter-spacing: 0.18em;
+  color: var(--ui-text-dimmed);
+}
+
+/* Header tabs: segmented underlines, cyan on the active app */
+[data-skin="cyberpunk"] .ale-header .ale-nav[data-orientation="horizontal"] .ale-nav-link {
+  padding: 6px 14px 8px;
+  border-bottom: 2px solid var(--ui-border);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-header .ale-nav[data-orientation="horizontal"] .ale-nav-link::before {
+  background-color: transparent;
+}
+
+[data-skin="cyberpunk"] .ale-header .ale-nav[data-orientation="horizontal"] .ale-nav-link:not([data-disabled]):hover {
+  border-bottom-color: var(--ui-primary);
+  color: var(--ui-text-highlighted);
+}
+
+[data-skin="cyberpunk"] .ale-header .ale-nav[data-orientation="horizontal"] .ale-nav-link[data-active] {
+  padding-bottom: 7px;
+  border-bottom: 3px solid var(--ui-secondary);
+  color: var(--ui-secondary);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--ui-secondary) 55%, transparent);
+}
+
+[data-skin="cyberpunk"] .ale-header .ale-nav-link :is(svg, .iconify) {
+  color: inherit;
+}
+
+/* Vertical menus (mobile menu, lists): active item is a solid cyan bar */
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link {
+  --ale-cut: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link::before {
+  border-radius: 0;
+}
+
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link :is(svg, .iconify) {
+  color: inherit;
+}
+
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link[data-active] {
+  color: var(--ui-text-inverted);
+}
+
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link[data-active]::before {
+  background-color: var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link[data-active] .ale-badge {
+  background-color: transparent;
+  color: inherit;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+/* Corner brackets on hover */
+[data-skin="cyberpunk"] .ale-nav[data-orientation="vertical"] .ale-nav-link:not([data-active], [data-disabled]):hover::after {
+  --ale-rc: var(--ui-secondary);
+  content: "";
+  position: absolute;
+  inset: 3px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ale-rc), var(--ale-rc)) left top / 9px 1.5px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) left top / 1.5px 9px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) right top / 9px 1.5px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) right top / 1.5px 9px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) left bottom / 9px 1.5px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) left bottom / 1.5px 9px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) right bottom / 9px 1.5px,
+    linear-gradient(var(--ale-rc), var(--ale-rc)) right bottom / 1.5px 9px;
+  background-repeat: no-repeat;
+}
+
+/* Footer */
+[data-skin="cyberpunk"] .ale-footer {
+  border-top: 1px solid var(--ui-border-accented);
+}
+
+[data-skin="cyberpunk"] .ale-footer p {
+  font: 500 9px/1.5 var(--ale-font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ui-text-muted);
+}
+
+[data-skin="cyberpunk"] .ale-footer .ale-nav-link {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ui-primary);
+}
+
+[data-skin="cyberpunk"] .ale-footer .ale-nav-link:hover {
+  color: var(--ui-secondary);
+}
+
+[data-skin="cyberpunk"] .ale-barcode {
+  display: inline-block;
+  width: 150px;
+  height: 20px;
+  opacity: 0.8;
+  background: repeating-linear-gradient(90deg, var(--ui-text-dimmed) 0 1px, transparent 1px 3px, var(--ui-text-dimmed) 3px 6px, transparent 6px 7px, var(--ui-text-dimmed) 7px 8px, transparent 8px 11px);
+}

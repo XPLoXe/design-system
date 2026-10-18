@@ -33,6 +33,10 @@ const items = computed<NavigationMenuItem[]>(() =>
 
     <template #right>
       <slot name="right" />
+      <span
+        class="ale-cp-only ale-barcode"
+        aria-hidden="true"
+      />
     </template>
   </UFooter>
 </template>

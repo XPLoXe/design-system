@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+@import "./cyberpunk.css";
 
 /*
  * Tailwind only auto-detects sources inside the consuming app and skips
