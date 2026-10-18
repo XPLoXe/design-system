@@ -15,10 +15,10 @@ Each consuming repo needs an `.npmrc` (the token stays in an env var, never comm
 
 ```ini
 @xploxe:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}
 ```
 
-Set `GITHUB_TOKEN` to a classic PAT with `read:packages` (in CI, a secret holding it), then:
+Set `GH_PACKAGES_TOKEN` to a classic PAT with `read:packages` (in CI, a secret holding it), then:
 
 ```bash
 pnpm add @xploxe/layer
