@@ -1,5 +1,5 @@
 {
-  "name": "@alebocchicchio/layer",
+  "name": "@xploxe/layer",
   "version": "0.1.0",
   "description": "Shared Nuxt layer for alebocchicchio.com apps: Nuxt UI theme, navbar/footer shell and shared config.",
   "license": "MIT",
@@ -20,11 +20,10 @@
   "main": "./nuxt.config.ts",
   "files": [
     "app",
-    "nuxt.config.ts",
-    "CHANGELOG.md"
+    "nuxt.config.ts"
   ],
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   },
   "packageManager": "pnpm@12.14.0",
   "engines": {
@@ -37,9 +36,7 @@
     "prepare": "nuxt prepare playground",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "nuxt typecheck playground",
-    "changeset": "changeset",
-    "release": "changeset publish"
+    "typecheck": "nuxt typecheck playground"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.145",
@@ -51,7 +48,6 @@
     "nuxt": "^4.0.0"
   },
   "devDependencies": {
-    "@changesets/cli": "^3.0.3",
     "@nuxt/eslint": "^1.17.0",
     "eslint": "^10.13.0",
     "nuxt": "^4.6.2",

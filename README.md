@@ -1,4 +1,4 @@
-# @alebocchicchio/layer
+# @xploxe/layer
 
 A shared [Nuxt layer](https://nuxt.com/docs/getting-started/layers) for every app on `*.alebocchicchio.com`. It sits on top of [Nuxt UI](https://ui.nuxt.com) and provides:
 
@@ -11,14 +11,23 @@ It is a thin layer over Nuxt UI, not a component library. Use Nuxt UI components
 
 ## Usage
 
+Each consuming repo needs an `.npmrc` (the token stays in an env var, never committed):
+
+```ini
+@xploxe:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+Set `GITHUB_TOKEN` to a classic PAT with `read:packages` (in CI, a secret holding it), then:
+
 ```bash
-pnpm add @alebocchicchio/layer
+pnpm add @xploxe/layer
 ```
 
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  extends: ['@alebocchicchio/layer'],
+  extends: ['@xploxe/layer'],
 })
 ```
 
@@ -128,13 +137,13 @@ Layer files live under `app/` (Nuxt 4 layout). Components in `app/components/` a
 
 ## Try unreleased changes in an app
 
-Point the app's `extends` at a local checkout of this repo instead of the npm package:
+Point the app's `extends` at a local checkout of this repo instead of the published package:
 
 ```ts
 // nuxt.config.ts in the consuming app
 export default defineNuxtConfig({
   extends: [
-    process.env.ALE_LAYER_PATH ?? '@alebocchicchio/layer',
+    process.env.ALE_LAYER_PATH ?? '@xploxe/layer',
   ],
 })
 ```
@@ -147,22 +156,14 @@ Or hardcode `extends: ['../design-system']` while you iterate. Run `pnpm install
 
 ## Release
 
-Releases are automated with [Changesets](https://github.com/changesets/changesets).
+Published to GitHub Packages when a version tag is pushed:
 
-1. In a PR that changes the layer, run `pnpm changeset`, pick the bump (patch/minor/major), describe the change, and commit the generated `.changeset/*.md` file.
-2. When the PR is merged to `main`, the **Release** workflow opens (or updates) a **Version Packages** PR that bumps `package.json` and writes `CHANGELOG.md`.
-3. When the Version Packages PR is merged, the workflow publishes the new version to npm (with provenance) and creates a git tag and GitHub release.
+```bash
+pnpm version patch   # or minor / major; bumps package.json and creates the vX.Y.Z tag
+git push --follow-tags
+```
 
-The **CI** workflow runs lint, typecheck, and the playground build on every PR and on pushes to `main`.
-
-### One-time setup
-
-- **npm**: the `@alebocchicchio` scope must exist and belong to your npm account (your username, or an org with that name). Create a **granular access token** with read and write access to that scope, set up so publishing from CI doesn't prompt for a 2FA code. npm caps the lifetime of write tokens, so note the expiry date and rotate the secret before then.
-- **GitHub secret**: add the token as a repository secret named `NPM_TOKEN` (Settings → Secrets and variables → Actions).
-- **GitHub Actions permissions**: Settings → Actions → General → Workflow permissions: enable **Allow GitHub Actions to create and approve pull requests**, or the Version Packages PR can't be opened.
-- **Branch protection** for `main` (recommended): require PRs and require the `ci` status check to pass.
-
-Note: PRs opened with the default `GITHUB_TOKEN` (like Version Packages) don't trigger other workflows, so CI won't run on that PR automatically. It only bumps versions, so that's usually fine. If branch protection requires the `ci` check, you'll need to close and reopen the PR, or give the action a personal access token.
+The **Release** workflow publishes with the built-in `GITHUB_TOKEN`, so no secrets are needed. The **CI** workflow runs lint, typecheck, and the playground build on every PR and on pushes to `main`.
 
 ## License
 

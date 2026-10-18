@@ -1,18 +1,16 @@
 name: Release
 
+# Publish to GitHub Packages when a version tag is pushed (pnpm version patch && git push --follow-tags).
 on:
   push:
-    branches: [main]
-
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+    tags: ['v*']
 
 permissions:
-  contents: write # commit version bumps, push tags, create GitHub releases
-  pull-requests: write # open the "Version Packages" PR
-  id-token: write # npm provenance
+  contents: read
+  packages: write
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -23,17 +21,11 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+          registry-url: https://npm.pkg.github.com
+          scope: '@xploxe'
 
       - run: pnpm install --frozen-lockfile
 
-      # With pending changesets: opens/updates the "Version Packages" PR.
-      # After that PR is merged: publishes the new version to npm.
-      - uses: changesets/action@v2
-        with:
-          publish-script: pnpm run release
+      - run: pnpm publish --no-git-checks
         env:
-          # Read by the .npmrc that setup-node writes for registry-url.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # pnpm reads PNPM_CONFIG_*, not NPM_CONFIG_*.
-          PNPM_CONFIG_PROVENANCE: true
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
