@@ -1,0 +1,6 @@
+# Single-package repo; this file only holds pnpm settings.
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+  # Only needed to switch to Vue 2; Vue 3 is the default.
+  vue-demi: false

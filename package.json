@@ -1,0 +1,61 @@
+{
+  "name": "@alebocchicchio/layer",
+  "version": "0.0.0",
+  "description": "Shared Nuxt layer for alebocchicchio.com apps: Nuxt UI theme, navbar/footer shell and shared config.",
+  "license": "MIT",
+  "author": "Alejandro Bocchicchio",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XPLoXe/design-system.git"
+  },
+  "homepage": "https://github.com/XPLoXe/design-system#readme",
+  "bugs": "https://github.com/XPLoXe/design-system/issues",
+  "keywords": [
+    "nuxt",
+    "nuxt-layer",
+    "nuxt-ui",
+    "design-system"
+  ],
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "files": [
+    "app",
+    "nuxt.config.ts",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "dev": "nuxt dev playground",
+    "build": "nuxt build playground",
+    "preview": "nuxt preview playground",
+    "prepare": "nuxt prepare playground",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "nuxt typecheck playground",
+    "changeset": "changeset",
+    "release": "changeset publish"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.145",
+    "@nuxt/kit": "^4.6.2",
+    "@nuxt/ui": "^4.12.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "peerDependencies": {
+    "nuxt": "^4.0.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@nuxt/eslint": "^1.17.0",
+    "eslint": "^10.13.0",
+    "nuxt": "^4.6.2",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.13"
+  }
+}

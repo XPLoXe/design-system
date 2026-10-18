@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/*
+ * Tailwind only auto-detects sources inside the consuming app and skips
+ * node_modules, so point it at this layer's own templates explicitly.
+ * The path is relative to this file, so it works from node_modules too.
+ */
+@source "../..";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/*
+ * Brand palette, used as the Nuxt UI `primary` color (see app.config.ts).
+ * Every shade from 50 to 950 must be defined.
+ */
+@theme static {
+  --color-brand-50: oklch(97% 0.016 262);
+  --color-brand-100: oklch(93.5% 0.034 262);
+  --color-brand-200: oklch(87.5% 0.064 262);
+  --color-brand-300: oklch(79% 0.108 262);
+  --color-brand-400: oklch(69% 0.158 262);
+  --color-brand-500: oklch(60% 0.196 262);
+  --color-brand-600: oklch(53% 0.214 262);
+  --color-brand-700: oklch(46.5% 0.196 262);
+  --color-brand-800: oklch(40% 0.158 262);
+  --color-brand-900: oklch(35% 0.118 262);
+  --color-brand-950: oklch(26% 0.082 262);
+}
+
+:root {
+  --ui-radius: 0.5rem;
+}

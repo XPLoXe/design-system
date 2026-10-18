@@ -1,0 +1,26 @@
+# Nuxt
+.nuxt
+.output
+.data
+.nitro
+.cache
+dist
+
+# Node
+node_modules
+*.tgz
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+.eslintcache
+
+# Local env files
+.env
+.env.*
+!.env.example
