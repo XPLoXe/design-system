@@ -17,6 +17,11 @@ const { isCyberpunk } = useSkin()
 
 const homeUrl = computed(() => apps.value.find(app => app.id === 'landing')?.url ?? '/')
 
+// Name of the active app (e.g. Spendy); falls back to the site name.
+const title = computed(() =>
+  apps.value.find(app => app.id === props.current)?.name ?? appConfig.site.name,
+)
+
 // Shown under the title in cyberpunk mode, e.g. SPENDY.ALEBOCCHICCHIO.COM
 const currentHost = computed(() => {
   const url = apps.value.find(app => app.id === props.current)?.url
@@ -37,11 +42,11 @@ const items = computed<NavigationMenuItem[]>(() =>
 
 <template>
   <UHeader
-    :title="appConfig.site.name"
+    :title="title"
     :to="homeUrl"
   >
     <template #title>
-      {{ appConfig.site.name }}
+      {{ title }}
       <span class="ale-cp-only ale-header-host">{{ currentHost }}</span>
     </template>
 
