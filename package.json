@@ -1,6 +1,6 @@
 {
   "name": "@xploxe/layer",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Shared Nuxt layer for alebocchicchio.com apps: Nuxt UI theme, navbar/footer shell and shared config.",
   "license": "MIT",
   "author": "Alejandro Bocchicchio",
