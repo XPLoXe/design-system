@@ -9,6 +9,8 @@ export default defineAppConfig({
     domain: 'alebocchicchio.com',
     // Show the cyberpunk mode toggle in the navbar.
     cyberpunk: true,
+    // Where the navbar's "Report bug" button links to; hidden when empty.
+    bugReportUrl: '',
   },
 
   ui: {
@@ -115,6 +117,8 @@ declare module 'nuxt/schema' {
       domain?: string
       /** Show the cyberpunk mode toggle in the navbar. Defaults to `true`. */
       cyberpunk?: boolean
+      /** Where the navbar's "Report bug" button links to, e.g. a GitHub new-issue URL. Hidden when empty. */
+      bugReportUrl?: string
     }
   }
 }

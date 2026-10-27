@@ -54,6 +54,19 @@ const items = computed<NavigationMenuItem[]>(() =>
 
     <template #right>
       <slot name="right" />
+      <UTooltip
+        v-if="appConfig.site.bugReportUrl"
+        text="Report bug"
+      >
+        <UButton
+          icon="i-lucide-bug"
+          color="neutral"
+          variant="ghost"
+          :to="appConfig.site.bugReportUrl"
+          target="_blank"
+          aria-label="Report bug"
+        />
+      </UTooltip>
       <!-- Cyberpunk mode is always dark -->
       <UColorModeButton :disabled="isCyberpunk" />
       <AleSkinButton />

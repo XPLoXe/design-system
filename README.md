@@ -54,6 +54,7 @@ export default defineAppConfig({
 | `site.footerText` | `Built with Nuxt UI.` | Text after the footer copyright |
 | `site.domain` | `alebocchicchio.com` | Root domain; the skin choice is shared across its subdomains |
 | `site.cyberpunk` | `true` | Show the cyberpunk mode toggle; `false` hides it and keeps the default skin |
+| `site.bugReportUrl` | `''` | Link for the navbar's "Report bug" button (opens in a new tab); hidden when empty |
 
 ### Components
 
